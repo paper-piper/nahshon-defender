@@ -1,0 +1,35 @@
+#!/bin/sh
+
+# load each validator so its function is available in this shell's environment.
+. .githooks/lib/validate_structure.sh
+. .githooks/lib/validate_filename.sh
+. .githooks/lib/validate_content.sh
+. .githooks/lib/validate_append_only.sh
+
+# get all added, copied, or modified files that end with .txt and save to a temp file
+# this is all the files we need to check. deleted files will be dealt with later.
+staged_files_list=$(mktemp /tmp/pre-commit-staged.XXXXXX)
+trap 'rm -f "$staged_files_list"' EXIT   # always clean up, even on early exit
+
+git diff --cached --name-only --diff-filter=ACM \
+    | grep '\.txt$' \
+    > "$staged_files_list" 
+
+did_fail=0 # a flag to track if any file failed validation
+
+# a loop to read each staged file from the temp file and validate it with all validators
+while IFS= read -r staged_file; do 
+    if ! validate_filename "$staged_file"; then
+        printf 'BLOCKED [filename]     %s\n' "$staged_file" >&2
+        printf '  > Basename must be a positive integer with a .txt extension.\n' >&2
+        printf '  > Valid examples:   1.txt  2.txt  46.txt\n' >&2
+        printf '  > Invalid examples: 0.txt  01.txt  1.5.txt  notes.txt\n' >&2    
+        did_fail=1
+    fi
+done < "$staged_files_list"
+
+if [ "$did_fail" -eq 1 ]; then
+    printf '\nCommit aborted — fix the errors listed above and try again.\n' >&2
+fi
+
+exit "$did_fail" # exit with 0 if all passed, or 1 if any failed
