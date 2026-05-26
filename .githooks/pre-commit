@@ -19,7 +19,7 @@ did_fail=0 # a flag to track if any file failed validation
 
 # a loop to read each staged file from the temp file and validate it with all validators
 while IFS= read -r staged_file; do 
-
+    
     if ! validate_filename "$staged_file"; then
         printf 'BLOCKED [filename]     %s\n' "$staged_file" >&2
         printf '  > Basename must be a positive integer with a .txt extension.\n' >&2
@@ -32,6 +32,14 @@ while IFS= read -r staged_file; do
         printf 'BLOCKED [content]      %s\n' "$staged_file" >&2
         printf '  > No line may begin with the word "delete" (case-sensitive).\n' >&2
         printf '  > "Delete" and "DELETE" are allowed; "delete" is not.\n' >&2
+        did_fail=1
+    fi
+
+    if ! validate_structure "$staged_file"; then
+        printf 'BLOCKED [structure]    %s\n' "$staged_file" >&2
+        printf '  > Files must live directly inside a V_N.N.N/ folder at the repo root.\n' >&2
+        printf '  > Valid example:   V_1.2.3/7.txt\n' >&2
+        printf '  > Invalid examples: loose.txt  subdir/V_1.0.0/1.txt  V_1.0.0/a/1.txt\n' >&2
         did_fail=1
     fi
 
