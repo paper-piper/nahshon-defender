@@ -43,6 +43,13 @@ while IFS= read -r staged_file; do
         did_fail=1
     fi
 
+        if ! validate_append_only "$staged_file"; then
+        printf 'BLOCKED [append-only]  %s\n' "$staged_file" >&2
+        printf '  > Lines that already exist in HEAD may not be changed or removed.\n' >&2
+        printf '  > You may only add new lines at the end of the file.\n' >&2
+        did_fail=1
+    fi
+
 done < "$staged_files_list"
 
 if [ "$did_fail" -eq 1 ]; then
