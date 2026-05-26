@@ -14,14 +14,18 @@ validate_append_only() {
         return 0
     fi
 
-    # using word count of type lines to count lines, then stripping spaces with tr.
     committed_line_count=$(git show "HEAD:$staged_file" | awk 'END {print NR}')
-    # read the first N lines of the staged file, where N is the number of lines in the committed version.
-    staged_opening_lines=$(git show ":$staged_file" | head -n "$committed_line_count")
-    # Capture the full committed content for the side-by-side comparison.
-    committed_content=$(git show "HEAD:$staged_file")
 
-    # The opening lines of the staged file must be byte-for-byte identical to
-    # the committed content. Any edit — even a single changed character — fails.
-    [ "$staged_opening_lines" = "$committed_content" ]
+    # Write both sides to temp files so $() never gets a chance to eat trailing newlines.
+    tmp_committed=$(mktemp)
+    tmp_staged=$(mktemp)
+    git show "HEAD:$staged_file"                                  > "$tmp_committed"
+    git show ":$staged_file" | head -n "$committed_line_count"    > "$tmp_staged"
+
+    # cmp -s compares byte-for-byte silently — exit 0 means identical, 1 means different.
+    cmp -s "$tmp_committed" "$tmp_staged"
+    result=$?
+
+    rm -f "$tmp_committed" "$tmp_staged"
+    return "$result"
 }
