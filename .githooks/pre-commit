@@ -19,6 +19,7 @@ did_fail=0 # a flag to track if any file failed validation
 
 # a loop to read each staged file from the temp file and validate it with all validators
 while IFS= read -r staged_file; do 
+
     if ! validate_filename "$staged_file"; then
         printf 'BLOCKED [filename]     %s\n' "$staged_file" >&2
         printf '  > Basename must be a positive integer with a .txt extension.\n' >&2
@@ -26,6 +27,14 @@ while IFS= read -r staged_file; do
         printf '  > Invalid examples: 0.txt  01.txt  1.5.txt  notes.txt\n' >&2    
         did_fail=1
     fi
+
+    if ! validate_content "$staged_file"; then
+        printf 'BLOCKED [content]      %s\n' "$staged_file" >&2
+        printf '  > No line may begin with the word "delete" (case-sensitive).\n' >&2
+        printf '  > "Delete" and "DELETE" are allowed; "delete" is not.\n' >&2
+        did_fail=1
+    fi
+
 done < "$staged_files_list"
 
 if [ "$did_fail" -eq 1 ]; then
