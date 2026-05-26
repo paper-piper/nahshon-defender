@@ -15,7 +15,7 @@ validate_append_only() {
     fi
 
     # using word count of type lines to count lines, then stripping spaces with tr.
-    committed_line_count=$(git show "HEAD:$staged_file" | wc -l | tr -d ' ')
+    committed_line_count=$(git show "HEAD:$staged_file" | awk 'END {print NR}')
     # read the first N lines of the staged file, where N is the number of lines in the committed version.
     staged_opening_lines=$(git show ":$staged_file" | head -n "$committed_line_count")
     # Capture the full committed content for the side-by-side comparison.
