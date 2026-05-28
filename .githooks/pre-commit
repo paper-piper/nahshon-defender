@@ -5,6 +5,7 @@
 . .githooks/lib/validate_filename.sh
 . .githooks/lib/validate_content.sh
 . .githooks/lib/validate_append_only.sh
+. .githooks/lib/validate_unique.sh
 
 # get all added, copied, or modified files that end with .txt and save to a temp file
 # this is all the files we need to check. deleted files will be dealt with later.
@@ -51,10 +52,16 @@ while IFS= read -r staged_file; do
         did_fail=1
     fi
 
-        if ! validate_append_only "$staged_file"; then
+    if ! validate_append_only "$staged_file"; then
         printf 'BLOCKED [append-only]  %s\n' "$staged_file" >&2
         printf '  > Lines that already exist in HEAD may not be changed or removed.\n' >&2
         printf '  > You may only add new lines at the end of the file.\n' >&2
+        did_fail=1
+    fi
+
+    if ! validate_unique "$staged_file"; then
+        printf 'BLOCKED [unique]       %s\n' "$staged_file" >&2
+        printf '  > All lines in the file must be unique (no duplicates).\n' >&2
         did_fail=1
     fi
 
