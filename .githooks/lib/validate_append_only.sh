@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 
-# validate that no newlines were added or removed from the top of the file, only appended
+# validate that they were no lines modified or deleted comprated to priviews commit.
 validate_append_only() {
     staged_file="$1"
 
