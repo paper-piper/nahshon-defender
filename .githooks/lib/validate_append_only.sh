@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env sh
 
 # validate that no newlines were added or removed from the top of the file, only appended
 validate_append_only() {

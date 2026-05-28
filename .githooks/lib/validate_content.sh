@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env sh
 # content rule - no line in a .txt file may begin with "delete"
 
 validate_content() {

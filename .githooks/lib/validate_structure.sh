@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env sh
 # validates two rules:
 # version folder name - each folder follows the pattern: V_[0-9].[0-9].[0-9] exactly.
 # no nesting - checks that each .txt file has a version folder above it, and the version folder is a child of the root.

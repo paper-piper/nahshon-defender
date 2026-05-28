@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env sh
 # filename rules - file must be named with a positive integer and .txt extension, e.g. 1.txt, 2.txt, etc.
 validate_filename(){
         staged_file="$1"
