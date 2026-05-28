@@ -1,10 +1,15 @@
-#!/bin/sh
+#!/usr/bin/env sh
 
+
+source_dir() {
+    dir_path="$1"
+    for f in "$dir_path"/*.sh; do
+        [ -f "$f" ] || continue
+        . "$f"
+    done
+}
 # load each validator so its function is available in this shell's environment.
-. .githooks/lib/validate_structure.sh
-. .githooks/lib/validate_filename.sh
-. .githooks/lib/validate_content.sh
-. .githooks/lib/validate_append_only.sh
+source_dir .githooks/lib
 
 # get all added, copied, or modified files that end with .txt and save to a temp file
 # this is all the files we need to check. deleted files will be dealt with later.
