@@ -23,8 +23,8 @@ git diff --cached --name-only --diff-filter=ACM \
 
 did_fail=0 # a flag to track if any file failed validation
 
-# check if any .txt files are staged for deletion, which is not allowed
-if git diff --cached --name-only --diff-filter=D | grep -q '\.txt$'; then
+# check for file deletion on a seperate place since we handle different type of files.
+if ! validate_deletion; then
     printf 'BLOCKED [no-delete]    (one or more .txt files staged for deletion)\n' >&2
     printf '  > .txt files may not be deleted once committed.\n' >&2
     did_fail=1
