@@ -27,6 +27,8 @@ Every `.txt` file staged for a commit must satisfy all four rules:
     validate_content.sh   # Enforces the content rule
     validate_structure.sh # Enforces the structure rule
     validate_append_only.sh # Enforces the append-only rule
+    validate_deletion.sh # Enforces the deletion rule
+
 scripts/
   setup.sh                # One-time setup: configures Git to use .githooks/
   test_hooks.sh           # Test suite for all validators
