@@ -14,9 +14,7 @@ Every `.txt` file staged for a commit must satisfy all four rules:
 | **Structure** | Files must live directly inside a version folder at the repo root. The version folder must match `V_N.N.N` (single digit per component). `V_1.2.3/7.txt` is valid. `loose.txt`, `V_1.0.0/sub/1.txt`, and `V_12.3.4/1.txt` are not. |
 | **Content** | No line may begin with the lowercase word `delete`. `Delete` and `DELETE` are allowed; `delete` is not. |
 | **Append-only** | Once a file is committed, its existing lines may never be changed or removed. You may only add new lines at the end. |
-
-Additionally, `.txt` files **may not be deleted** once they have been committed.
-
+| **File deletion** | `.txt` files **may not be deleted** once they have been committed. |
 ---
 
 ## Project Structure
